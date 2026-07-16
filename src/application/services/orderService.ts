@@ -1,6 +1,6 @@
 import { OrderEntity } from "../../domain/entities/order";
 import { OrderRepository } from "../../infra/repositories/orderRepository";
-import { orderRequest } from "../../api/order.routes";
+import { orderRequest } from "../../api/orderController";
 
 class OrderService {
     constructor(private orderRepository: OrderRepository, private eventPublisher: ) {}

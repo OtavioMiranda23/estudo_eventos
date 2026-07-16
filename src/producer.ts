@@ -1,23 +1,25 @@
 import { OrderEntity } from "./domain/entities/order";
 import { createChannel, queueName } from "./rabbitmq";
+import { v4 as uuidv4 } from "uuid";
 
 class EventAdapter {
   public async publish(orderEntity: OrderEntity): Promise<void> {
     const { connection, channel } = await createChannel();
+    const uuid = uuidv4();
     const payload = JSON.stringify({
-      eventId: "4fcb0f36-4d8b-4c8d-88c7-d91e5e9e0d6d",
+      eventId: uuid,
       eventType: "PedidoCriado",
-      occurredAt: "2026-07-16T13:45:00Z",
-      aggregateId: "pedido-123",
-
+      occurredAt: new Date().toISOString(),
+      aggregateId: orderEntity.id,
       data: {
-        pedidoId: 123,
-        clienteId: 45,
-        valor: 250.0,
+        pedidoId: orderEntity.id,
+        customerName: orderEntity.customerName,
+        totalAmount: orderEntity.totalAmount, //TODO: calcular o total do pedido
         itens: [
           {
-            produtoId: 5,
+            productName: "Produto 1",
             quantidade: 2,
+            amount: 100.0,
           },
         ],
       },
