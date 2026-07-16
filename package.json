@@ -1,0 +1,31 @@
+{
+    "name": "rabbitmq-stdy",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Node.js + TypeScript project to learn RabbitMQ with amqplib.",
+    "type": "commonjs",
+    "scripts": {
+        "build": "tsc -p tsconfig.json",
+        "start:consumer": "tsx watch src/consumer.ts",
+        "start:producer": "tsx watch src/producer.ts",
+        "consumer": "node dist/consumer.js",
+        "producer": "node dist/producer.js",
+        "dev": "tsx watch src/producer.ts",
+        "lint": "tsc -p tsconfig.json --noEmit"
+    },
+    "dependencies": {
+        "amqplib": "^0.10.4",
+        "better-sqlite3": "^12.11.1",
+        "crypto": "^1.0.1",
+        "express": "^5.2.1",
+        "uuid": "^14.0.1"
+    },
+    "devDependencies": {
+        "@types/amqplib": "^0.10.7",
+        "@types/better-sqlite3": "^7.6.13",
+        "@types/express": "^5.0.6",
+        "@types/node": "^22.15.30",
+        "tsx": "^4.20.5",
+        "typescript": "^5.9.2"
+    }
+}
