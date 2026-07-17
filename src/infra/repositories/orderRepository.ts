@@ -1,8 +1,8 @@
 import { db } from "../../database";
-import type { Order } from "../../domain/entities/order";
+import   OrderEntity from "../../domain/entities/orderEntity";
 
 export class OrderRepository {
-  public save(order: Order): number {
+  public save(order: OrderEntity): OrderEntity {
     const insertOrder = db.prepare(`
       INSERT INTO orders (customer_name)
       VALUES (?)
@@ -18,12 +18,12 @@ export class OrderRepository {
       const orderId = Number(orderResult.lastInsertRowid);
 
       for (const item of order.items) {
-        insertItem.run(orderId, item.productId, item.quantity);
+        insertItem.run(orderId, item.id, item.name, item.quantity);
       }
 
       return orderId;
     });
 
-    return transaction();
+    return new OrderEntity(transaction(), order.customerName, order.items, new Date().toISOString());
   }
 }

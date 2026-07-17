@@ -1,4 +1,4 @@
-import { createChannel, queueName } from "./rabbitmq";
+import { createChannel, queueName } from "./rabbitmqConfig";
 
 async function main(): Promise<void> {
   const { connection, channel } = await createChannel();
