@@ -19,10 +19,10 @@ export class OrderController {
   }
 
   private registerRoutes(): void {
-    this.router.post("/orders", this.create);
+    this.router.post("/orders", this.create.bind(this));
   }
 
-  public async create(request: Request, response: Response,): Promise<Response> {
+  public async create(request: Request, response: Response): Promise<Response> {
     const body = request.body as createOrderRequest;
 
     if (!body.items || body.items.length === 0) {
@@ -42,5 +42,5 @@ export class OrderController {
       createdAt: order.createdAt,
       items: order.items,
     });
-  };
+  }
 }

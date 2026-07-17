@@ -1,42 +1,57 @@
-import { createChannel, queueName } from "./rabbitmqConfig";
+import "dotenv/config";
+import RabbitMQConfig from "./infra/rabbitmq";
+
+const queues = [
+  "order.created.payment",
+  "order.created.inventory",
+  "order.created.analytics",
+];
 
 async function main(): Promise<void> {
-  const { connection, channel } = await createChannel();
+  const rabbitUrl =
+    process.env.RABBITMQ_URL ?? "amqp://guest:guest@localhost:5672";
+
+  const rabbitConfig = new RabbitMQConfig(queues, rabbitUrl);
+  const { channel, connection } = await rabbitConfig.createChannel();
 
   channel.prefetch(1);
 
-  await channel.consume(
-    queueName,
-    async (message) => {
-      if (!message) {
-        return;
-      }
+  for (const queue of queues) {
+    await channel.consume(
+      queue,
+      async (message) => {
+        if (!message) {
+          return;
+        }
 
-      try {
-        const raw = message.content.toString("utf8");
-        const data = JSON.parse(raw) as {
-          id: number;
-          content: string;
-          createdAt: string;
-        };
+        try {
+          const raw = message.content.toString("utf8");
+          const data = JSON.parse(raw) as {
+            eventId: string;
+            eventType: string;
+            occurredAt: string;
+            aggregateId: number;
+            data: Record<string, unknown>;
+          };
 
-        console.log(
-          `Recebido: ${data.id} - ${data.content} (${data.createdAt})`,
-        );
+          console.log(
+            `[${queue}] Recebido: ${data.eventType} - ${JSON.stringify(data.data)}`,
+          );
 
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        channel.ack(message);
-      } catch (error) {
-        console.error("Falha ao processar mensagem:", error);
-        channel.nack(message, false, false);
-      }
-    },
-    {
-      noAck: false,
-    },
-  );
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          channel.ack(message);
+        } catch (error) {
+          console.error("Falha ao processar mensagem:", error);
+          channel.nack(message, false, false);
+        }
+      },
+      {
+        noAck: false,
+      },
+    );
+  }
 
-  console.log(`Consumindo fila ${queueName}. Ctrl+C para sair.`);
+  console.log(`Consumindo filas: ${queues.join(", ")}. Ctrl+C para sair.`);
 
   process.on("SIGINT", async () => {
     await channel.close();

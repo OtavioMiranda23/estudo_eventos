@@ -1,4 +1,4 @@
-import OrderEntity from "./domain/entities/orderEntity";
+import OrderEntity from "../domain/entities/orderEntity";
 
 export default class Events {
   channel: any;
@@ -8,7 +8,11 @@ export default class Events {
     this.connection = connection;
   }
 
-  public async publishOrderCreated(orderEntity: OrderEntity, queues: string[], payloadEvent: string): Promise<void> {
+  public async publishOrderCreated(
+    orderEntity: OrderEntity,
+    queues: string[],
+    payloadEvent: string,
+  ): Promise<void> {
     //envia cada mensagem para a fila
     for await (const queue of queues) {
       this.channel.sendToQueue(queue, Buffer.from(payloadEvent), {
@@ -16,7 +20,7 @@ export default class Events {
         contentType: "application/json",
       });
     }
-   }
+  }
 
   public closeConnection(): void {
     if (this.channel) {

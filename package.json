@@ -7,24 +7,31 @@
     "scripts": {
         "build": "tsc -p tsconfig.json",
         "start:consumer": "tsx watch src/consumer.ts",
-        "start:producer": "tsx watch src/producer.ts",
+        "start:server": "tsx watch src/server.ts",
         "consumer": "node dist/consumer.js",
-        "producer": "node dist/producer.js",
-        "dev": "tsx watch src/producer.ts",
-        "lint": "tsc -p tsconfig.json --noEmit"
+        "server": "node dist/server.js",
+        "dev": "tsx watch src/server.ts",
+        "lint": "tsc -p tsconfig.json --noEmit",
+        "test": "jest --runInBand",
+        "test:e2e": "jest --runInBand --testPathPatterns='e2e'"
     },
     "dependencies": {
         "amqplib": "^0.10.4",
         "better-sqlite3": "^12.11.1",
         "crypto": "^1.0.1",
-        "express": "^5.2.1",
-        "uuid": "^14.0.1"
+        "dotenv": "^17.4.2",
+        "express": "^5.2.1"
     },
     "devDependencies": {
         "@types/amqplib": "^0.10.7",
         "@types/better-sqlite3": "^7.6.13",
         "@types/express": "^5.0.6",
+        "@types/jest": "^30.0.0",
         "@types/node": "^22.15.30",
+        "@types/supertest": "^7.2.1",
+        "jest": "^30.4.2",
+        "supertest": "^7.2.2",
+        "ts-jest": "^29.4.11",
         "tsx": "^4.20.5",
         "typescript": "^5.9.2"
     }
